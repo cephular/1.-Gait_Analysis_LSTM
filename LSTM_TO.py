@@ -6,35 +6,40 @@ from keras.layers import Dense, LSTM, Dropout
 import matplotlib.pyplot as plt
 
 
-INFILEPATH = "./iotlab/Data41/"	
-OUTFILEPATH = "./iotlab/"		
-NUMOFFILE = 41					
-SHEET_SIZE = 19					
-NUMOFTRAIN = 12					
-ACC_LIST = ["F", "G", "H"]			
-ACC_LIST_F = ["R", "T", "V"]		
-GYRO_LIST_F = ["L", "N", "P"]			
+#코드 구조
+# 1. 파일 입력 및 전처리: inputData()
+# 2. 데이터 병합 및 구분(trainset, testset)처리: template()
+# 3. 모델 구성 및 성능 평가: evaluate_model()
+# 4. 메인 함수: __main__
+
+INFILEPATH = "./iotlab/Data41/"	#입력 파일 경로
+OUTFILEPATH = "./iotlab/"		#출력 파일 경로
+NUMOFFILE = 41					#입력할 파일 수(=사람)
+SHEET_SIZE = 19					#입력할 시트 수 (몇몇 파일의 20시트가 오류있음)
+NUMOFTRAIN = 12					#학습에 사용할 시트 수
+ACC_LIST = ["F", "G", "H"]			#l_acc_x_col, l_acc_y_col, l_acc_z_col
+ACC_LIST_F = ["R", "T", "V"]		#l_acc_x_col_F, l_acc_y_col_F, l_acc_z_col_F
+GYRO_LIST_F = ["L", "N", "P"]		#l_gyro_x_col_F, l_gyro_y_col_F, l_gyro_z_col_F		
 LABLE_COL, TIME_COL = "B", "W"
 
 SLICE_SIZE = 25
-WINDOW_SIZE = 30		
-SIZE_STEP = 3			
+WINDOW_SIZE = 30		#윈도우 크기
+SIZE_STEP = 3			#윈도우 내의 간격
 
-FSELECT = {			
-	"raw":False,			
-	"u_vector":False,			
-	"norm_vector":True,		
-	"change":False,				
-	"ratio":False,			
-	"stdDev":False,			
-	"test":False}				
-NUMOFFEATURE = 6			
+FSELECT = {			#입력에 사용될 FEATURE
+	"raw":False,				#원데이터: 6개
+	"u_vector":False,			#단위벡터: 2개
+	"norm_vector":True,			#벡터정규화: 6개
+	"change":False,				#변화율: 6개
+	"ratio":False,				#비율: 6개
+	"stdDev":False,				#표준편차: 6개
+	"test":False}				#테스트: 6개
+NUMOFFEATURE = 6				#입력에 들어갈 feature의 개수 (FSELECT 참고)
 
-NUMOFOUTPUT = 5			
-EPOCH = 30				
+NUMOFOUTPUT = 5			#출력 개수
+EPOCH = 30				#학습 횟수
 
-EXCEPTION = True	
-
+EXCEPTION = True		#불균형데이터에서 샘플이 가장 많은 레이블 제외 여부
 
 def inputData(fPath):
 	files_x = []
